@@ -1,49 +1,49 @@
-// Initialize Firebase with your Firebase project configuration.
+// Initialize Firebase (use your own Firebase configuration)
 const firebaseConfig = {
-    apiKey: 'AIzaSyCTHc5uV9qLcOmpo_kZBAWs0DJ8dLPkxhE',
-    authDomain: 'recruitmentcv-fe4aa.firebaseapp.com',
-    databaseURL: 'https://recruitmentcv-fe4aa-default-rtdb.asia-southeast1.firebasedatabase.app',
-    projectId: 'recruitmentcv-fe4aa',
-    storageBucket: 'recruitmentcv-fe4aa.appspot.com',
-    messagingSenderId: '760673751902',
-    appId: '1:760673751902:web:b539b37c3451264fe675cf'
+    apiKey: "AIzaSyCTHc5uV9qLcOmpo_kZBAWs0DJ8dLPkxhE",
+    authDomain: "recruitmentcv-fe4aa.firebaseapp.com",
+    projectId: "recruitmentcv-fe4aa",
 };
-
 firebase.initializeApp(firebaseConfig);
 
-// Reference to the Firebase Realtime Database.
-const database = firebase.database();
+// Reference to Firebase Authentication
+const auth = firebase.auth();
 
-// Submit CV Form
-const cvForm = document.getElementById('cvForm');
-cvForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('name').value;
-    // Add more form fields as needed.
-    
-    // Store the CV in the database.
-    const cvData = {
-        name: name,
-        // Add more CV data fields here.
-    };
-    database.ref('cvs').push(cvData);
-    cvForm.reset();
+// DOM elements
+const loginEmail = document.getElementById("login-email");
+const loginPassword = document.getElementById("login-password");
+const loginButton = document.getElementById("login-button");
+const signupEmail = document.getElementById("signup-email");
+const signupPassword = document.getElementById("signup-password");
+const signupButton = document.getElementById("signup-button");
+const errorMessage = document.getElementById("error-message");
+
+// Log In event listener
+loginButton.addEventListener("click", () => {
+    const email = loginEmail.value;
+    const password = loginPassword.value;
+    auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+            // Successfully logged in
+            errorMessage.textContent = "";
+            window.location.href = "inbox.html"; // Redirect to inbox or dashboard
+        })
+        .catch((error) => {
+            errorMessage.textContent = error.message;
+        });
 });
 
-// Display Job Listings
-const jobList = document.getElementById('jobList');
-database.ref('jobListings').on('child_added', (snapshot) => {
-    const job = snapshot.val();
-    const li = document.createElement('li');
-    li.textContent = `${job.title} - ${job.description}`;
-    jobList.appendChild(li);
-});
-
-// Sample user authentication
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-        console.log('User is signed in:', user.displayName);
-    } else {
-        console.log('No user is signed in.');
-    }
+// Sign Up event listener
+signupButton.addEventListener("click", () => {
+    const email = signupEmail.value;
+    const password = signupPassword.value;
+    auth.createUserWithEmailAndPassword(email, password)
+        .then(() => {
+            // Successfully signed up
+            errorMessage.textContent = "";
+            window.location.href = "inbox.html"; // Redirect to inbox or dashboard
+        })
+        .catch((error) => {
+            errorMessage.textContent = error.message;
+        });
 });
